@@ -1,0 +1,10 @@
+﻿__pycache__/
+*.pyc
+*.pyo
+
+# 实际采集库（含个人作答，不进版本库）
+data/responses.jsonl
+
+# 工具产物
+.dsh-office-*/
+*.log
