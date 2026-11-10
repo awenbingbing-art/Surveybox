@@ -60,7 +60,7 @@ python server.py --admin-key 我的密码          # 换后台钥匙
 ## 能做什么
 
 - **题库可换**：四种题型（单选/多选/量表/文本），后台改 JSON 直接生效，不碰代码
-- **模板**：内置「示例问卷」「空白问卷」「北京蓝天调查（18 题 + 86 条样本）」，一键载入
+- **模板**：内置「校园咖啡调查（8 题，四种题型齐全）」「示例问卷」「空白问卷」，一键载入
 - **出数**：频数、均值±标准差、文本摘录；条形与饼图切换
 - **对比**：`--db2` 后两库并排，标出每个选项的百分比差值
 - **导入**：后台粘贴 JSON / JSONL / CSV，表头写题干也能对上，时间可摊到过去 N 天
@@ -83,11 +83,10 @@ Surveybox/
 │   └── admin.html             # 后台
 └── data/
     ├── templates/             # 题库模板（进版本库）
-    │   ├── generic.survey.json
-    │   ├── blank.survey.json
-    │   ├── beijing-air.survey.json
-    │   ├── beijing-air.responses.jsonl
-    │   └── demo-b.responses.jsonl
+    │   ├── campus-coffee.survey.json   # 校园咖啡调查，8 题
+    │   ├── generic.survey.json         # 四题型示例
+    │   ├── blank.survey.json           # 空白
+    │   └── _archive/                   # 归档，不显示在后台
     ├── survey.json            # 当前题库（运行时生成，不进版本库）
     └── responses.jsonl        # 当前数据（运行时生成，不进版本库）
 ```

@@ -1,0 +1,66 @@
+{
+  "title": "校园咖啡与自习空间小调查",
+  "intro": "这是一份 8 题的小问卷，用来了解同学们在咖啡馆、自习室这类空间里坐着学习的习惯。匿名填写，约需 1 分钟。",
+  "questions": [
+    {
+      "id": "c1",
+      "type": "single",
+      "title": "你平均一周去咖啡馆或付费自习空间几次",
+      "options": ["基本不去", "1—2 次", "3—4 次", "5 次以上"],
+      "required": true
+    },
+    {
+      "id": "c2",
+      "type": "single",
+      "title": "你通常和谁一起去",
+      "options": ["一个人", "同学", "朋友", "看情况"],
+      "required": true
+    },
+    {
+      "id": "c3",
+      "type": "multi",
+      "title": "选座位时你最看重哪几点",
+      "hint": "最多选 3 项",
+      "options": ["座位舒服", "环境安静", "有插座", "网速快", "价格便宜", "离得近"],
+      "max": 3,
+      "required": true
+    },
+    {
+      "id": "c4",
+      "type": "scale",
+      "title": "对常去那家的整体满意程度",
+      "labels": ["很不满意", "不太满意", "一般", "比较满意", "非常满意"],
+      "scale_max": 5,
+      "required": true
+    },
+    {
+      "id": "c5",
+      "type": "scale",
+      "title": "你觉得那里的价格合理吗",
+      "labels": ["太贵了", "偏贵", "还行", "比较划算", "很便宜"],
+      "scale_max": 5,
+      "required": true
+    },
+    {
+      "id": "c6",
+      "type": "single",
+      "title": "每次大概花多少钱",
+      "options": ["0—15 元", "16—30 元", "31—50 元", "50 元以上"],
+      "required": true
+    },
+    {
+      "id": "c7",
+      "type": "multi",
+      "title": "一般会点什么",
+      "options": ["咖啡", "茶饮", "简餐甜点", "只坐不点"],
+      "required": true
+    },
+    {
+      "id": "c8",
+      "type": "text",
+      "title": "有什么想对店家说的",
+      "hint": "选填，一句话就行",
+      "required": false
+    }
+  ]
+}
