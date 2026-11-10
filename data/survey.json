@@ -1,0 +1,142 @@
+{
+  "title": "北京“蓝天”感知调查",
+  "intro": "您好！本问卷用于了解公众对北京大气治理成效的感知与评价，匿名填写，约需 2 分钟，结果仅用于课程报告。感谢支持！",
+  "questions": [
+    {
+      "id": "gender",
+      "type": "single",
+      "title": "您的性别",
+      "options": ["男", "女", "不愿透露"],
+      "required": true
+    },
+    {
+      "id": "grade",
+      "type": "single",
+      "title": "您的年级",
+      "options": ["大一", "大二", "大三", "大四", "研究生"],
+      "required": true
+    },
+    {
+      "id": "major",
+      "type": "single",
+      "title": "您的专业大类",
+      "options": ["文法", "理工", "经管", "艺术", "其他"],
+      "required": true
+    },
+    {
+      "id": "resid",
+      "type": "single",
+      "title": "您在北京连续居住的时长",
+      "options": ["不足1年", "1—3年", "3—10年", "10年以上", "土生土长"],
+      "required": true
+    },
+    {
+      "id": "familia",
+      "type": "single",
+      "title": "家中是否有患呼吸系统或心血管疾病的成员",
+      "options": ["有", "无", "不确定"],
+      "required": true
+    },
+    {
+      "id": "q6",
+      "type": "scale",
+      "title": "与 2013 年前后相比，您觉得北京空气质量改善程度如何",
+      "hint": "2013 年北京 PM2.5 年均浓度为 89.5 μg/m³，重污染天数 58 天",
+      "labels": ["明显变差", "略有变差", "差不多", "明显改善", "极大改善"],
+      "scale_max": 5,
+      "required": true
+    },
+    {
+      "id": "q7",
+      "type": "scale",
+      "title": "近两年，您在日常生活中有多经常看到“北京蓝”（透亮蓝天）",
+      "labels": ["几乎看不到", "较少", "一般", "较多", "几乎天天都有"],
+      "scale_max": 5,
+      "required": true
+    },
+    {
+      "id": "q8",
+      "type": "scale",
+      "title": "您对当前北京空气质量的满意程度",
+      "labels": ["很不满意", "不太满意", "一般", "比较满意", "非常满意"],
+      "scale_max": 5,
+      "required": true
+    },
+    {
+      "id": "q9",
+      "type": "single",
+      "title": "您估计目前北京 PM2.5 年均浓度大约是多少",
+      "options": ["20 μg/m³ 以下", "20—35", "35—50", "50—70", "不清楚"],
+      "required": true
+    },
+    {
+      "id": "q10",
+      "type": "multi",
+      "title": "您认为当前北京 PM2.5 的主要来源有哪些",
+      "hint": "最多选 3 项",
+      "options": ["机动车", "燃煤", "扬尘", "工业", "餐饮油烟", "区域传输", "不清楚"],
+      "max": 3,
+      "required": true
+    },
+    {
+      "id": "q11",
+      "type": "multi",
+      "title": "您通常通过哪些渠道了解空气质量信息",
+      "hint": "可多选",
+      "options": ["手机App", "电视天气预报", "新闻客户端", "社交媒体", "学校宣传", "家人朋友"],
+      "required": true
+    },
+    {
+      "id": "q12",
+      "type": "single",
+      "title": "您是否知道北京已连续多年 PM2.5 年均浓度达到国家二级标准（35 μg/m³）",
+      "options": ["知道", "听说过", "不知道"],
+      "required": true
+    },
+    {
+      "id": "q13",
+      "type": "scale",
+      "title": "重污染天气期间实行机动车单双号限行",
+      "labels": ["完全不支持", "不太支持", "一般", "比较支持", "非常支持"],
+      "scale_max": 5,
+      "required": true
+    },
+    {
+      "id": "q14",
+      "type": "scale",
+      "title": "空气污染预警期间要求施工工地停工、土方作业暂停",
+      "labels": ["完全不支持", "不太支持", "一般", "比较支持", "非常支持"],
+      "scale_max": 5,
+      "required": true
+    },
+    {
+      "id": "q15",
+      "type": "scale",
+      "title": "政府补贴居民“煤改电”“煤改气”，同时禁止散煤燃烧",
+      "labels": ["完全不支持", "不太支持", "一般", "比较支持", "非常支持"],
+      "scale_max": 5,
+      "required": true
+    },
+    {
+      "id": "q16",
+      "type": "single",
+      "title": "如果为持续改善空气质量需要居民共同分担成本，您每月最多愿意多支付",
+      "options": ["0元", "1—20元", "21—50元", "51—100元", "100元以上"],
+      "required": true
+    },
+    {
+      "id": "q17",
+      "type": "single",
+      "title": "您认为下一步最应该优先治理的是",
+      "options": ["机动车", "扬尘", "工业", "区域协同", "冬季取暖"],
+      "required": true
+    },
+    {
+      "id": "q18",
+      "type": "text",
+      "title": "用一句话说说您对北京空气治理的建议",
+      "hint": "选填",
+      "required": false
+    }
+  ]
+}

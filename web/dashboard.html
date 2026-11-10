@@ -2,70 +2,61 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>统计看板 · Surveybox</title>
 <style>
   :root{
-    --cream:#FAF9F5; --ink:#1A1916; --muted:#6E6A61; --clay:#C96A4A; --clay2:#E8D9D2;
+    --cream:#FAF9F5; --ink:#1A1916; --muted:#6E6A61; --clay:#C96A42;
     --hair:#D9D5C9; --ivory:#F1EFE7; --green:#5B7A5A;
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--cream);color:var(--ink);
-       font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--cream);color:var(--ink)}
+  body{font-family:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
        font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1180px;margin:0 auto;padding:48px 40px 80px}
-  .mark{width:62px;height:3px;background:var(--clay);margin-bottom:26px}
+  .wrap{max-width:1120px;margin:0 auto;padding:44px 32px 72px}
+  .mark{width:56px;height:3px;background:var(--clay);margin-bottom:24px}
   .kicker{font-size:10.5px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
-  h1{font-family:Georgia,"Songti SC","宋体",serif;font-weight:400;font-size:38px;
-     letter-spacing:.02em;margin:8px 0 6px}
+  h1{font-family:Georgia,"Songti SC","宋体",serif;font-weight:400;font-size:36px;
+     letter-spacing:.02em;margin:8px 0 6px;line-height:1.25}
   .meta{color:var(--muted);font-size:12.5px}
   .meta b{color:var(--ink);font-weight:600}
   .bar-top{display:flex;justify-content:space-between;align-items:flex-end;
-           border-bottom:1px solid var(--hair);padding-bottom:18px;margin-bottom:34px;gap:20px;flex-wrap:wrap}
-  .acts{display:flex;gap:8px}
-  .acts a,.acts button{font-size:12px;letter-spacing:.08em;padding:9px 16px;border:1px solid var(--hair);
-        background:#fff;color:var(--ink);text-decoration:none;cursor:pointer}
-  .acts a:hover,.acts button:hover{border-color:var(--clay);color:var(--clay)}
-  .sec-title{font-size:10.5px;letter-spacing:.22em;color:var(--clay);margin:0 0 16px;text-transform:uppercase}
-  h2{font-family:Georgia,"Songti SC","宋体",serif;font-weight:400;font-size:22px;margin:0 0 20px}
-  .grid{display:grid;grid-template-columns:1.35fr 1fr;gap:56px;margin-bottom:44px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:44px;margin-bottom:44px}
-  /* 频数条 */
-  .row{display:grid;grid-template-columns:104px 1fr 66px;gap:12px;align-items:center;
-       padding:5px 0;font-size:13px}
+           border-bottom:1px solid var(--hair);padding-bottom:16px;margin-bottom:30px;gap:16px;flex-wrap:wrap}
+  .acts{display:flex;gap:8px;flex-wrap:wrap}
+  .acts a,.acts button{font-size:12px;letter-spacing:.08em;padding:9px 15px;border:1px solid var(--hair);
+        background:#fff;color:var(--ink);text-decoration:none;cursor:pointer;font-family:inherit}
+  .acts a:active,.acts button:active{border-color:var(--clay);color:var(--clay)}
+  .hero{display:flex;gap:44px;flex-wrap:wrap;margin-bottom:38px;align-items:flex-end}
+  .bignum{font-family:Georgia,serif;font-size:66px;color:var(--clay);line-height:1;letter-spacing:-.01em}
+  .bignum small{font-size:15px;color:var(--muted);letter-spacing:.04em;margin-left:8px}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 48px}
+  .blk{border-top:1px solid var(--hair);padding-top:14px;min-width:0}
+  .blk .lb{font-size:10.5px;letter-spacing:.16em;color:var(--clay);text-transform:uppercase;margin-bottom:8px}
+  .blk h3{font-family:Georgia,"Songti SC","宋体",serif;font-weight:400;font-size:17px;
+          margin:0 0 12px;line-height:1.45}
+  .row{display:grid;grid-template-columns:minmax(64px,120px) 1fr 74px;gap:10px;align-items:center;
+       padding:4px 0;font-size:12.5px}
   .row .k{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .row .track{height:6px;background:var(--ivory);position:relative}
+  .row .track{height:6px;background:var(--ivory);position:relative;min-width:30px}
   .row .fill{position:absolute;left:0;top:0;bottom:0;background:var(--clay)}
-  .row .v{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;font-size:12.5px}
+  .row .v{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
   .row .v b{color:var(--ink);font-weight:600}
-  /* 李克特 */
-  .lk{display:grid;grid-template-columns:132px 1fr 92px;gap:14px;align-items:center;
-      padding:9px 0;border-bottom:1px dotted var(--hair)}
-  .lk .k{font-size:12.5px;color:var(--muted)}
-  .lk .track{height:8px;background:var(--ivory);position:relative}
-  .lk .fill{position:absolute;left:0;top:0;bottom:0;background:var(--clay);opacity:.85}
-  .lk .tick{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--ink);opacity:.35}
-  .lk .v{text-align:right;font-variant-numeric:tabular-nums}
-  .lk .v b{font-size:15px;font-family:Georgia,serif;font-weight:400}
-  .lk .v span{color:var(--muted);font-size:11.5px}
-  /* 大数字 */
-  .bignum{font-family:Georgia,serif;font-size:64px;color:var(--clay);line-height:1;letter-spacing:-.01em}
-  .bignum small{font-size:16px;color:var(--muted);letter-spacing:.04em;margin-left:6px}
-  .note{color:var(--muted);font-size:12.5px;margin-top:10px;max-width:280px}
-  /* 检验卡 */
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:10px}
-  .card{border:1px solid var(--hair);background:#fff;padding:18px 20px}
-  .card .t{font-size:11px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
-  .card .m{font-family:Georgia,serif;font-size:26px;line-height:1.2}
-  .card .d{font-size:12px;color:var(--muted);margin-top:6px}
-  .sig{color:var(--green)}
-  .pair{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-  .chip{font-size:11.5px;border:1px solid var(--hair);background:#fff;padding:3px 9px;color:var(--muted)}
-  .chip b{color:var(--ink);font-weight:600}
-  footer{margin-top:56px;border-top:1px solid var(--hair);padding-top:16px;
-         font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-  .empty{padding:60px 0;color:var(--muted)}
-  @media(max-width:900px){.grid,.grid3,.cards{grid-template-columns:1fr;gap:32px}}
+  .mean{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  .mean b{font-family:Georgia,serif;font-size:32px;font-weight:400;color:var(--clay);line-height:1}
+  .mean span{color:var(--muted);font-size:12px}
+  .quote{border-left:2px solid var(--hair);padding:2px 0 2px 12px;color:var(--muted);
+         font-size:12.5px;margin:6px 0}
+  .empty{padding:70px 0;color:var(--muted);font-size:14px}
+  footer{margin-top:56px;border-top:1px solid var(--hair);padding-top:14px;
+         font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;
+         gap:14px;flex-wrap:wrap}
+  @media (max-width:820px){
+    .wrap{padding:30px 18px 56px}
+    h1{font-size:27px}
+    .grid{grid-template-columns:1fr;gap:26px}
+    .bignum{font-size:52px}
+    .hero{gap:28px}
+  }
 </style>
 </head>
 <body>
@@ -73,145 +64,99 @@
   <div class="mark"></div>
   <div class="bar-top">
     <div>
-      <div class="kicker">社会观察 · 问卷统计</div>
-      <h1>北京“蓝天”感知调查</h1>
-      <div class="meta" id="meta">正在读取数据…</div>
+      <div class="kicker">统计 · DASHBOARD</div>
+      <h1 id="title">统计看板</h1>
+      <div class="meta" id="meta">读取中…</div>
     </div>
     <div class="acts">
       <a href="/export.csv">导出 CSV</a>
+      <a href="/export.md">导出表</a>
       <a href="/">去填问卷</a>
       <button onclick="load()">刷新</button>
     </div>
   </div>
 
-  <div id="body" class="empty">加载中…</div>
+  <div class="hero" id="hero"></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">还没有数据。打开 <b>/</b> 填第一份，或在后台灌数。</div>
 
   <footer>
-    <span>北京市生态环境状况公报 2013—2025 ｜ WHO 空气质量指导值 5 μg/m³</span>
-    <span>本地采集 · 零依赖 · data/responses.jsonl</span>
+    <span>Surveybox · 本地采集，数据不出本机</span>
+    <span id="foot">—</span>
   </footer>
 </div>
 
 <script>
-const fmt = (v)=> (v===null||v===undefined) ? "—" : v;
+const fmtP = v => (Math.round(v*10)/10).toFixed(1);
 
-function freqRows(list, max){
-  const top = max || Math.max(...list.map(x=>x.p), 1);
-  return list.map(x=>`
+function barRows(rows, maxP){
+  const top = maxP || Math.max(...rows.map(r=>r.p), 1);
+  return rows.map(r=>`
     <div class="row">
-      <div class="k">${x.k}</div>
-      <div class="track"><div class="fill" style="width:${(x.p/top*100).toFixed(1)}%"></div></div>
-      <div class="v"><b>${x.p}</b>% <span style="opacity:.6">${x.n}</span></div>
+      <div class="k" title="${r.k}">${r.k}</div>
+      <div class="track"><div class="fill" style="width:${(r.p/top*100).toFixed(1)}%"></div></div>
+      <div class="v"><b>${fmtP(r.p)}</b>%<span style="opacity:.55"> ${r.n}</span></div>
     </div>`).join("");
 }
 
 async function load(){
   const r = await fetch("/api/stats");
   const s = await r.json();
+  document.getElementById("title").textContent = (s.title || "统计看板");
+  document.getElementById("meta").innerHTML =
+    `样本量 <b>N = ${s.n}</b> ｜ 更新 <b>${s.updated || "—"}</b> ｜ 匿名自填`;
+  document.getElementById("foot").textContent = "N = " + s.n;
+
   if(!s.n){
-    document.getElementById("body").innerHTML = "<div class='empty'>还没有数据。打开 <b>/</b> 填写第一份问卷，或用 <code>--empty</code> 从头采集。</div>";
-    document.getElementById("meta").textContent = "N = 0";
+    document.getElementById("hero").innerHTML = "";
+    document.getElementById("grid").innerHTML = "";
+    document.getElementById("empty").style.display = "block";
     return;
   }
-  document.getElementById("meta").innerHTML =
-    `样本量 <b>N = ${s.n}</b> ｜ 更新时间 <b>${s.updated}</b> ｜ 匿名自填，本地存储`;
+  document.getElementById("empty").style.display = "none";
 
-  const demo = s.demo;
-  const lik = s.likert;
-  const q9 = s.q9, q12 = s.q12 || [], q16 = s.q16, q17 = s.q17 || [];
-  const t = s.tests || {};
+  const scales = s.questions.filter(q=>q.type==="scale" && q.mean !== undefined);
+  const overall = scales.length ? (scales.reduce((a,q)=>a+q.mean,0)/scales.length) : null;
 
-  const likHtml = Object.entries(lik).map(([k,v])=>`
-    <div class="lk">
-      <div class="k">${k}</div>
-      <div class="track">
-        <div class="fill" style="width:${(v.mean/5*100).toFixed(1)}%"></div>
-        <div class="tick" style="left:${Math.min(100,(v.mean-v.sd)/5*100).toFixed(1)}%"></div>
-        <div class="tick" style="left:${Math.min(100,(v.mean+v.sd)/5*100).toFixed(1)}%"></div>
-      </div>
-      <div class="v"><b>${v.mean.toFixed(2)}</b> <span>±${v.sd.toFixed(2)}</span></div>
-    </div>`).join("");
-
-  const q9Html = q9.buckets.map(b=>{
-    const isC = b.k === "20—35";
-    return `<div class="row">
-      <div class="k" style="${isC?'color:var(--green);font-weight:600':''}">${b.k}${isC?' ✓':''}</div>
-      <div class="track"><div class="fill" style="width:${(b.p/Math.max(...q9.buckets.map(x=>x.p),1)*100).toFixed(1)}%;${isC?'background:var(--green)':''}"></div></div>
-      <div class="v"><b>${b.p}</b>%</div></div>`;
-  }).join("");
-
-  document.getElementById("body").innerHTML = `
-    <div class="grid">
-      <div>
-        <div class="sec-title">感知与态度 · 1—5 分</div>
-        <h2>认可变化，但期待涨得更快</h2>
-        ${likHtml}
-        <div style="margin-top:14px;font-size:11.5px;color:var(--muted)">浅色竖线为 ±1 标准差区间</div>
-      </div>
-      <div>
-        <div class="sec-title">样本构成</div>
-        <h2>N = ${s.n}</h2>
-        <div style="font-size:12px;color:var(--muted);margin:-10px 0 12px">在京居住时长</div>
-        ${freqRows(demo["在京居住时长"]||[])}
-        <div style="font-size:12px;color:var(--muted);margin:18px 0 12px">年级</div>
-        ${freqRows(demo["年级"]||[])}
-      </div>
+  document.getElementById("hero").innerHTML = `
+    <div>
+      <div class="kicker" style="margin-bottom:8px">样本量</div>
+      <div class="bignum">${s.n}<small>份</small></div>
     </div>
-
-    <div class="grid3">
-      <div>
-        <div class="sec-title">认知 · 浓度估计</div>
-        ${q9Html}
-        <div class="note">正确率 <b>${q9.correct_pct}%</b>。2025 年实际值 27.0 μg/m³，落在 20—35 区间。</div>
-      </div>
-      <div>
-        <div class="sec-title">认知 · 污染源</div>
-        ${freqRows(s["污染源认知"]||[])}
-        <div class="note">实际源解析：移动源 50%、生活源 18%、工业与扬尘各 10%、燃煤 &lt;3%。</div>
-      </div>
-      <div>
-        <div class="sec-title">认知 · 信息渠道</div>
-        ${freqRows(s["信息渠道"]||[])}
-        <div class="note">是否知道已连续达标：${(q12.map(x=>x.k+" "+x.p+"%").join(" ／ "))}</div>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div>
-        <div class="sec-title">成本分担</div>
-        <h2 style="margin-bottom:14px">每月愿意多支付</h2>
-        ${freqRows(q16.buckets)}
-      </div>
-      <div>
-        <div class="sec-title">支付意愿加权值</div>
-        <div class="bignum">${q16.mean}<small>元 / 月</small></div>
-        <div class="note">按组中值 0／10／35／75／150 加权；中位数落在 ${q16.buckets.filter(b=>b.p>=20).map(b=>b.k)[0]||"—"} 区间。</div>
-        <div class="sec-title" style="margin-top:26px">下一步优先治理</div>
-        <div class="pair">${q17.map(x=>`<span class="chip">${x.k} <b>${x.p}%</b></span>`).join("")}</div>
-      </div>
-    </div>
-
-    <div class="sec-title">分组差异与相关</div>
-    <div class="cards">
-      <div class="card">
-        <div class="t">居住 ≥10 年 vs 其他（Q6）</div>
-        <div class="m">${t.t_q6 ? `t(${t.t_q6.df}) = ${t.t_q6.t}` : "—"}</div>
-        <div class="d">${t.t_q6 ? `${t.t_q6.mean_a} ± ${t.t_q6.sd_a}（n=${t.t_q6.n_a}） vs ${t.t_q6.mean_b} ± ${t.t_q6.sd_b}（n=${t.t_q6.n_b}）<br>
-        <span class="${t.t_q6.sig?'sig':''}">${t.t_q6.sig?'差异显著（p<0.05）':'差异不显著'}</span>` : ""}</div>
-      </div>
-      <div class="card">
-        <div class="t">认知准确 × 是否知晓达标</div>
-        <div class="m">${t.chi2_q9_q12 ? `χ²(${t.chi2_q9_q12.df}) = ${t.chi2_q9_q12.chi2}` : "—"}</div>
-        <div class="d">临界值 ${t.chi2_q9_q12?t.chi2_q9_q12.crit:"—"}<br>
-        <span class="${t.chi2_q9_q12&&t.chi2_q9_q12.sig?'sig':''}">${t.chi2_q9_q12&&t.chi2_q9_q12.sig?'关联显著':'关联不显著'}</span></div>
-      </div>
-      <div class="card">
-        <div class="t">改善感知 × 满意度</div>
-        <div class="m">r = ${fmt(t.r_q6_q8)}</div>
-        <div class="d">Pearson 相关系数<br><span style="opacity:.7">Q6 与 Q8 呈正相关</span></div>
-      </div>
+    ${overall!==null?`<div>
+      <div class="kicker" style="margin-bottom:8px">量表题均值</div>
+      <div class="bignum">${overall.toFixed(2)}<small>/ 5</small></div>
+    </div>`:""}
+    <div>
+      <div class="kicker" style="margin-bottom:8px">题目数</div>
+      <div class="bignum">${s.questions.length}<small>题</small></div>
     </div>`;
+
+  document.getElementById("grid").innerHTML = s.questions.map((q, i)=>{
+    const kind = q.type==="scale" ? "量表" : q.type==="multi" ? "多选" : q.type==="text" ? "文本" : "单选";
+    const lb = `<div class="lb">${String(i+1).padStart(2,"0")} · ${kind}</div>`;
+    let bodyHtml;
+
+    if(q.type === "scale" && q.mean !== undefined){
+      bodyHtml = `
+        <div class="mean"><b>${q.mean.toFixed(2)}</b><span>± ${q.sd.toFixed(2)}　有效 ${q.answered}</span></div>
+        <div class="row" style="grid-template-columns:1fr 74px">
+          <div class="track"><div class="fill" style="width:${(q.mean/5*100).toFixed(1)}%"></div></div>
+          <div class="v"><b>${(q.mean/5*100).toFixed(0)}</b>%</div>
+        </div>`;
+    } else if(q.type === "text"){
+      bodyHtml = (q.samples && q.samples.length)
+        ? q.samples.map(t=>`<div class="quote">${t}</div>`).join("")
+        : `<div class="v" style="text-align:left">（暂无文本作答）</div>`;
+    } else {
+      bodyHtml = (q.rows && q.rows.length) ? barRows(q.rows)
+        : `<div class="v" style="text-align:left">—</div>`;
+    }
+
+    return `<div class="blk">${lb}<h3>${q.title}</h3>${bodyHtml}</div>`;
+  }).join("");
 }
+
 load();
 </script>
 </body>

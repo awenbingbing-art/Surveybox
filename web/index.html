@@ -2,281 +2,206 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>北京大气治理公众感知调查</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>问卷 · Surveybox</title>
 <style>
   :root{
-    --cream:#FAF9F5; --ink:#1A1916; --muted:#6E6A61; --clay:#C96A4A;
+    --cream:#FAF9F5; --ink:#1A1916; --muted:#6E6A61; --clay:#C96A42;
     --hair:#D9D5C9; --ivory:#F1EFE7;
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--cream);color:var(--ink);
-       font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;
-       font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:760px;margin:0 auto;padding:56px 24px 120px}
-  .mark{width:62px;height:3px;background:var(--clay);margin-bottom:28px}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--cream);color:var(--ink)}
+  body{font-family:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+       font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;margin:0 auto;padding:48px 22px 150px}
+  .mark{width:56px;height:3px;background:var(--clay);margin-bottom:26px}
   .kicker{font-size:11px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
-  h1{font-family:Georgia,"Songti SC","宋体",serif;font-weight:400;font-size:36px;
-     letter-spacing:.02em;margin:10px 0 14px;line-height:1.35}
-  .lead{color:var(--muted);font-size:14px;max-width:620px}
-  hr{border:0;border-top:1px solid var(--hair);margin:40px 0}
-  .q{margin:0 0 34px}
+  h1{font-family:Georgia,"Songti SC","宋体",serif;font-weight:400;font-size:34px;
+     letter-spacing:.02em;margin:10px 0 12px;line-height:1.35}
+  .intro{color:var(--muted);font-size:14px;max-width:600px}
+  hr{border:0;border-top:1px solid var(--hair);margin:32px 0}
+  .q{margin:0 0 30px}
   .q .no{font-family:Georgia,"宋体",serif;color:var(--clay);font-size:12px;
-         letter-spacing:.12em;margin-right:10px}
-  .q .t{font-size:16px;margin-bottom:4px}
-  .q .hint{font-size:12px;color:var(--muted);margin-bottom:12px}
-  label.opt{display:flex;align-items:flex-start;gap:10px;padding:9px 0;
-            cursor:pointer;border-bottom:1px dotted transparent}
-  label.opt:hover{border-bottom-color:var(--hair)}
-  label.opt input{margin:5px 0 0;accent-color:var(--clay)}
-  .scale{display:flex;gap:6px;flex-wrap:wrap}
-  .scale label{flex:1 1 0;min-width:74px;text-align:center;border:1px solid var(--hair);
-               padding:10px 4px;cursor:pointer;background:#fff;font-size:13px;transition:.15s}
-  .scale label:hover{border-color:var(--clay);color:var(--clay)}
-  .scale input{position:absolute;opacity:0;pointer-events:none}
+         letter-spacing:.1em;margin-right:8px}
+  .q .t{font-size:16.5px;line-height:1.55}
+  .q .hint{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .q .body{margin-top:12px}
+  label.opt{display:flex;align-items:flex-start;gap:11px;padding:12px 2px;cursor:pointer}
+  label.opt:active{background:var(--ivory)}
+  label.opt input{margin:4px 0 0;accent-color:var(--clay);width:17px;height:17px;flex:0 0 auto}
+  .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .scale label{display:flex;flex-direction:column;align-items:center;justify-content:center;
+               gap:3px;min-height:62px;border:1px solid var(--hair);background:#fff;
+               cursor:pointer;font-size:11px;color:var(--muted);padding:6px 2px;transition:.12s}
+  .scale label b{font-family:Georgia,serif;font-size:19px;font-weight:400;color:var(--ink)}
   .scale label.sel{background:var(--clay);border-color:var(--clay);color:#fff}
-  textarea{width:100%;min-height:80px;border:1px solid var(--hair);background:#fff;
-           padding:12px;font:inherit;color:inherit;resize:vertical}
-  textarea:focus,input[type=text]:focus{outline:2px solid rgba(201,106,74,.25)}
-  button{margin-top:8px;background:var(--clay);color:#fff;border:0;padding:14px 40px;
-         font-size:15px;letter-spacing:.08em;cursor:pointer}
-  button:hover{background:#B55B3D}
-  button:disabled{opacity:.5;cursor:default}
-  .meter{font-size:12px;color:var(--muted);margin-top:14px}
-  .done{display:none;text-align:left}
-  .done h2{font-family:Georgia,"宋体",serif;font-weight:400;font-size:30px}
-  .badge{display:inline-block;font-size:12px;letter-spacing:.18em;color:var(--clay);
-         border:1px solid var(--clay);padding:4px 10px;margin-bottom:20px}
-  footer{margin-top:60px;font-size:12px;color:var(--muted);border-top:1px solid var(--hair);padding-top:16px}
+  .scale label.sel b{color:#fff}
+  textarea{width:100%;min-height:88px;border:1px solid var(--hair);background:#fff;
+           padding:12px;font:inherit;color:inherit;resize:vertical;border-radius:0}
+  textarea:focus{outline:2px solid rgba(201,106,66,.22)}
+  .btnbar{position:fixed;left:0;right:0;bottom:0;background:rgba(250,249,245,.96);
+          border-top:1px solid var(--hair);padding:12px 22px calc(12px + env(safe-area-inset-bottom))}
+  .btnbar .in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:14px}
+  button{flex:1;background:var(--clay);color:#fff;border:0;padding:15px 24px;
+         font-size:16px;letter-spacing:.06em;cursor:pointer;font-family:inherit}
+  button:active{background:#B55B3D}
+  button:disabled{opacity:.45}
+  .meter{font-size:12px;color:var(--muted);white-space:nowrap}
+  .done{display:none;padding-top:20px}
+  .done .badge{display:inline-block;font-size:11px;letter-spacing:.18em;color:var(--clay);
+               border:1px solid var(--clay);padding:4px 10px;margin-bottom:18px}
+  .done h2{font-family:Georgia,"宋体",serif;font-weight:400;font-size:30px;margin:0 0 8px}
+  footer{margin-top:44px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--hair);
+         padding-top:14px}
+  @media (max-width:460px){
+    .wrap{padding:32px 18px 160px}
+    h1{font-size:27px}
+    .scale{gap:4px}
+    .scale label{font-size:10px;min-height:58px}
+    .scale label b{font-size:17px}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="mark"></div>
-  <div class="kicker">社会观察 · 调查问卷</div>
-  <h1>北京“蓝天”感知调查</h1>
-  <p class="lead">您好！我们是北京联合大学《习近平新时代中国特色社会主义思想概论》课程社会观察小组。本问卷用于了解公众对北京大气治理成效的感知与评价，匿名填写，约需 2 分钟，结果仅用于课程报告。感谢支持！</p>
+  <div class="kicker">问卷 · SURVEY</div>
+  <h1 id="title">加载中…</h1>
+  <p class="intro" id="intro"></p>
   <hr>
-
-  <form id="f">
-    <div class="q">
-      <div class="t"><span class="no">Q1</span>您的性别</div>
-      <div id="q1"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q2</span>您的年级</div>
-      <div id="q2"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q3</span>您的专业大类</div>
-      <div id="q3"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q4</span>您在北京连续居住的时长</div>
-      <div id="q4"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q5</span>家中是否有患呼吸系统或心血管疾病的成员</div>
-      <div id="q5"></div>
-    </div>
-
-    <hr>
-    <div class="q">
-      <div class="t"><span class="no">Q6</span>与 2013 年前后相比，您觉得北京空气质量改善程度如何</div>
-      <div class="hint">2013 年北京 PM2.5 年均浓度为 89.5 μg/m³，重污染天数 58 天</div>
-      <div class="scale" data-name="q6" data-labels="明显变差|略有变差|差不多|明显改善|极大改善"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q7</span>近两年，您有多经常看到“北京蓝”（透亮蓝天）</div>
-      <div class="scale" data-name="q7" data-labels="几乎看不到|较少|一般|较多|几乎天天都有"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q8</span>您对当前北京空气质量的满意程度</div>
-      <div class="scale" data-name="q8" data-labels="很不满意|不太满意|一般|比较满意|非常满意"></div>
-    </div>
-
-    <hr>
-    <div class="q">
-      <div class="t"><span class="no">Q9</span>您估计目前北京 PM2.5 年均浓度大约是多少</div>
-      <div id="q9"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q10</span>您认为当前北京 PM2.5 的主要来源有哪些</div>
-      <div class="hint">最多选 3 项</div>
-      <div id="q10"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q11</span>您通常通过哪些渠道了解空气质量信息</div>
-      <div class="hint">可多选</div>
-      <div id="q11"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q12</span>您是否知道北京已连续多年 PM2.5 年均浓度达到国家二级标准（35 μg/m³）</div>
-      <div id="q12"></div>
-    </div>
-
-    <hr>
-    <div class="q">
-      <div class="t"><span class="no">Q13</span>重污染天气期间实行机动车单双号限行</div>
-      <div class="scale" data-name="q13" data-labels="完全不支持|不太支持|一般|比较支持|非常支持"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q14</span>空气污染预警期间要求施工工地停工、土方作业暂停</div>
-      <div class="scale" data-name="q14" data-labels="完全不支持|不太支持|一般|比较支持|非常支持"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q15</span>政府补贴居民“煤改电”“煤改气”，同时禁止散煤燃烧</div>
-      <div class="scale" data-name="q15" data-labels="完全不支持|不太支持|一般|比较支持|非常支持"></div>
-    </div>
-
-    <hr>
-    <div class="q">
-      <div class="t"><span class="no">Q16</span>如果为持续改善空气质量需要居民共同分担成本，您每月最多愿意多支付</div>
-      <div id="q16"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q17</span>您认为下一步最应该优先治理的是</div>
-      <div id="q17"></div>
-    </div>
-    <div class="q">
-      <div class="t"><span class="no">Q18</span>用一句话说说您对北京空气治理的建议</div>
-      <div class="hint">选填</div>
-      <textarea name="q18" placeholder="可以留空"></textarea>
-    </div>
-
-    <button type="submit" id="btn">提交问卷</button>
-    <div class="meter" id="meter">已作答 0 / 17 题</div>
-  </form>
-
+  <form id="form"></form>
   <div class="done" id="done">
     <div class="badge">已提交</div>
     <h2>谢谢你的参与。</h2>
-    <p class="lead">你的回答已计入统计。可以关闭本页。</p>
-    <p><a href="/dashboard" style="color:#C96A4A">查看统计看板 →</a></p>
+    <p class="intro">你的回答已计入统计，可以关闭本页。</p>
+    <p><a href="/dashboard" style="color:#C96A42">查看统计看板 →</a></p>
   </div>
+  <footer>数据仅保存在本机 ｜ <a href="/dashboard" style="color:#6E6A61">统计看板</a></footer>
+</div>
 
-  <footer>北京联合大学 · 《习近平新时代中国特色社会主义思想概论》社会观察小组 ｜ 本地采集，数据不出本机</footer>
+<div class="btnbar" id="bar">
+  <div class="in">
+    <span class="meter" id="meter">0 / 0</span>
+    <button id="submit" type="button">提交问卷</button>
+  </div>
 </div>
 
 <script>
-const OPTS = {
-  q1: ["男","女","不愿透露"],
-  q2: ["大一","大二","大三","大四","研究生"],
-  q3: ["文法","理工","经管","艺术","其他"],
-  q4: ["不足1年","1—3年","3—10年","10年以上","土生土长"],
-  q5: ["有","无","不确定"],
-  q9: ["20 μg/m³ 以下","20—35","35—50","50—70","不清楚"],
-  q10: ["机动车","燃煤","扬尘","工业","餐饮油烟","区域传输","不清楚"],
-  q11: ["手机App","电视天气预报","新闻客户端","社交媒体","学校宣传","家人朋友"],
-  q12: ["知道","听说过","不知道"],
-  q16: ["0元","1—20元","21—50元","51—100元","100元以上"],
-  q17: ["机动车","扬尘","工业","区域协同","冬季取暖"]
-};
-const MULTI = ["q10","q11"];
-const KEYMAP = {q1:"gender",q2:"grade",q3:"major",q4:"resid",q5:"familia",q9:"q9",
-                q10:"q10",q11:"q11",q12:"q12",q16:"q16",q17:"q17"};
+let SURVEY = {questions: []};
+const answers = {};
 
-function buildRadio(id){
-  const box = document.getElementById(id);
-  OPTS[id].forEach((o,i)=>{
-    const l = document.createElement("label");
-    l.className = "opt";
-    l.innerHTML = `<input type="radio" name="${id}" value="${o}"> <span>${o}</span>`;
-    box.appendChild(l);
-  });
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html !== undefined) e.innerHTML = html;
+  return e;
 }
-["q1","q2","q3","q4","q5","q9","q12","q16","q17"].forEach(buildRadio);
 
-["q10","q11"].forEach(id=>{
-  const box = document.getElementById(id);
-  OPTS[id].forEach(o=>{
-    const l = document.createElement("label");
-    l.className = "opt";
-    l.innerHTML = `<input type="checkbox" name="${id}" value="${o}"> <span>${o}</span>`;
-    box.appendChild(l);
-  });
-});
+function render(){
+  const form = document.getElementById("form");
+  form.innerHTML = "";
+  SURVEY.questions.forEach((q, i) => {
+    const box = el("div", "q");
+    const tag = q.required ? "" : '<span style="color:var(--muted);font-size:12.5px">（选填）</span>';
+    box.appendChild(el("div", "t",
+      `<span class="no">${String(i+1).padStart(2,"0")}</span>${q.title}${tag}`));
+    if(q.hint) box.appendChild(el("div","hint",q.hint));
+    const body = el("div","body");
 
-document.querySelectorAll(".scale").forEach(box=>{
-  const name = box.dataset.name, labels = box.dataset.labels.split("|");
-  labels.forEach((txt,i)=>{
-    const l = document.createElement("label");
-    l.innerHTML = `<input type="radio" name="${name}" value="${i+1}">${i+1} · ${txt}`;
-    l.addEventListener("click",()=>{
-      box.querySelectorAll("label").forEach(x=>x.classList.remove("sel"));
-      l.classList.add("sel");
-    });
-    box.appendChild(l);
-  });
-});
+    if(q.type === "scale"){
+      const wrap = el("div","scale");
+      const top = q.scale_max || 5;
+      for(let v=1; v<=top; v++){
+        const lab = el("label", "", `<b>${v}</b>${(q.labels||[])[v-1]||""}`);
+        lab.onclick = () => {
+          wrap.querySelectorAll("label").forEach(x=>x.classList.remove("sel"));
+          lab.classList.add("sel");
+          answers[q.id] = v; meter();
+        };
+        wrap.appendChild(lab);
+      }
+      body.appendChild(wrap);
 
-// 多选题最多 3 项
-document.querySelectorAll('input[type=checkbox]').forEach(cb=>{
-  cb.addEventListener("change",()=>{
-    const name = cb.name;
-    const picked = document.querySelectorAll(`input[name="${name}"]:checked`);
-    if(picked.length > 3){ cb.checked = false; }
-    meter();
+    } else if(q.type === "multi"){
+      q.options.forEach(o=>{
+        const lab = el("label","opt",`<input type="checkbox" value="${o}"><span>${o}</span>`);
+        const cb = lab.querySelector("input");
+        cb.onchange = () => {
+          const picked = [...body.querySelectorAll("input:checked")];
+          if(q.max && picked.length > q.max){ cb.checked = false; return; }
+          answers[q.id] = picked.map(x=>x.value);
+          meter();
+        };
+        body.appendChild(lab);
+      });
+
+    } else if(q.type === "text"){
+      const ta = el("textarea");
+      ta.placeholder = q.hint || "可以留空";
+      ta.oninput = () => { answers[q.id] = ta.value.trim(); meter(); };
+      body.appendChild(ta);
+
+    } else {
+      q.options.forEach(o=>{
+        const lab = el("label","opt",`<input type="radio" name="${q.id}" value="${o}"><span>${o}</span>`);
+        lab.querySelector("input").onchange = () => { answers[q.id] = o; meter(); };
+        body.appendChild(lab);
+      });
+    }
+    box.appendChild(body);
+    form.appendChild(box);
   });
-});
+  meter();
+}
 
 function meter(){
-  const total = 17;
-  let done = 0;
-  for(let i=1;i<=5;i++) if(document.querySelector(`input[name="q${i}"]:checked`)) done++;
-  for(let i=6;i<=8;i++) if(document.querySelector(`input[name="q${i}"]:checked`)) done++;
-  if(document.querySelector('input[name="q9"]:checked')) done++;
-  if(document.querySelectorAll('input[name="q10"]:checked').length) done++;
-  if(document.querySelectorAll('input[name="q11"]:checked').length) done++;
-  if(document.querySelector('input[name="q12"]:checked')) done++;
-  for(let i=13;i<=15;i++) if(document.querySelector(`input[name="q${i}"]:checked`)) done++;
-  if(document.querySelector('input[name="q16"]:checked')) done++;
-  if(document.querySelector('input[name="q17"]:checked')) done++;
-  document.getElementById("meter").textContent = `已作答 ${done} / ${total} 题`;
+  const req = SURVEY.questions.filter(q=>q.required);
+  const done = req.filter(q=>{
+    const v = answers[q.id];
+    return Array.isArray(v) ? v.length>0 : (v !== undefined && v !== "" && v !== null);
+  }).length;
+  document.getElementById("meter").textContent = `${done} / ${req.length}`;
 }
-document.querySelectorAll("input").forEach(el=>el.addEventListener("change",meter));
 
-document.getElementById("f").addEventListener("submit", async e=>{
-  e.preventDefault();
-  const rec = {};
-  for(const [k,key] of Object.entries(KEYMAP)){
-    if(MULTI.includes(k)){
-      rec[key] = [...document.querySelectorAll(`input[name="${k}"]:checked`)].map(x=>x.value);
-    }else{
-      const el = document.querySelector(`input[name="${k}"]:checked`);
-      rec[key] = el ? el.value : "";
-    }
-  }
-  for(const k of ["q6","q7","q8","q13","q14","q15"]){
-    const el = document.querySelector(`input[name="${k}"]:checked`);
-    rec[k] = el ? parseInt(el.value,10) : null;
-  }
-  rec.q18 = document.querySelector('textarea[name="q18"]').value.trim();
+async function boot(){
+  const r = await fetch("/api/survey");
+  SURVEY = await r.json();
+  document.getElementById("title").textContent = SURVEY.title || "问卷";
+  document.getElementById("intro").textContent = SURVEY.intro || "";
+  document.title = (SURVEY.title||"问卷") + " · Surveybox";
+  render();
+}
 
-  const missing = Object.keys(KEYMAP).filter(k=>{
-    const v = rec[KEYMAP[k]];
-    return MULTI.includes(k) ? v.length===0 : !v;
-  }).concat(["q6","q7","q8","q13","q14","q15"].filter(k=>!rec[k]));
+document.getElementById("submit").onclick = async () => {
+  const req = SURVEY.questions.filter(q=>q.required);
+  const missing = req.filter(q=>{
+    const v = answers[q.id];
+    return Array.isArray(v) ? v.length===0 : (v===undefined || v==="");
+  });
   if(missing.length){
-    alert("还有 " + missing.length + " 题未作答：" + missing.join("、").replace(/q/g,"Q"));
+    alert("还有 " + missing.length + " 题没答：\n" + missing.map(q=>q.title).join("\n"));
     return;
   }
-
-  const btn = document.getElementById("btn");
+  const btn = document.getElementById("submit");
   btn.disabled = true; btn.textContent = "提交中…";
   try{
-    const r = await fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(rec)});
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    document.getElementById("f").style.display="none";
-    document.getElementById("done").style.display="block";
+    const r = await fetch("/api/submit", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(answers)
+    });
+    const j = await r.json();
+    if(!r.ok) throw new Error(j.missing ? "缺少必答题" : (j.error||("HTTP "+r.status)));
+    document.getElementById("form").style.display = "none";
+    document.getElementById("bar").style.display = "none";
+    document.getElementById("done").style.display = "block";
     window.scrollTo({top:0,behavior:"smooth"});
-  }catch(err){
-    btn.disabled=false; btn.textContent="提交问卷";
-    alert("提交失败：" + err.message);
+  }catch(e){
+    btn.disabled = false; btn.textContent = "提交问卷";
+    alert("提交失败：" + e.message);
   }
-});
-meter();
+};
+
+boot();
 </script>
 </body>
 </html>
