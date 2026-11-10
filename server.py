@@ -30,10 +30,52 @@ DATA = os.path.join(HERE, "data")
 SURVEY = os.path.join(DATA, "survey.json")
 DB = os.path.join(DATA, "responses.jsonl")
 DB2 = None                      # 可选：对比用的第二份数据
-SAMPLE = os.path.join(DATA, "sample_responses.jsonl")
+SAMPLE = os.path.join(DATA, "templates", "beijing-air.responses.jsonl")
+TEMPLATES = os.path.join(DATA, "templates")
 ADMIN_KEY = "tally2026"
 
-VER = "Surveybox/2.1"
+VER = "Surveybox/2.2"
+
+
+def list_templates():
+    """扫描 data/templates 下的 *.survey.json，返回可用模板。"""
+    out = []
+    if not os.path.isdir(TEMPLATES):
+        return out
+    for fn in sorted(os.listdir(TEMPLATES)):
+        if not fn.endswith(".survey.json"):
+            continue
+        name = fn[:-len(".survey.json")]
+        path = os.path.join(TEMPLATES, fn)
+        try:
+            with open(path, encoding="utf-8-sig") as f:
+                s = json.load(f)
+        except Exception:
+            continue
+        resp = os.path.join(TEMPLATES, name + ".responses.jsonl")
+        n = 0
+        if os.path.exists(resp):
+            with open(resp, encoding="utf-8-sig") as f:
+                n = sum(1 for line in f if line.strip())
+        out.append({"name": name, "title": s.get("title", name),
+                    "questions": len(s.get("questions", [])),
+                    "responses": n, "has_data": n > 0})
+    return out
+
+
+def load_template(name, with_data=False):
+    src = os.path.join(TEMPLATES, name + ".survey.json")
+    if not os.path.exists(src):
+        raise FileNotFoundError(name)
+    with open(src, encoding="utf-8-sig") as f:
+        survey = json.load(f)
+    save_survey(survey)
+    resp = os.path.join(TEMPLATES, name + ".responses.jsonl")
+    if with_data and os.path.exists(resp):
+        with open(resp, encoding="utf-8-sig") as s, open(DB, "w", encoding="utf-8") as d:
+            d.write(s.read())
+    return {"title": survey.get("title"), "questions": len(survey.get("questions", [])),
+            "n": len(load_db())}
 
 # 二维码：内置 vendor/qrcode（纯 Python，无外部依赖）
 sys.path.insert(0, os.path.join(HERE, "vendor"))
@@ -320,6 +362,13 @@ class Handler(BaseHTTPRequestHandler):
             if not admin_ok:
                 return self._json({"error": "forbidden"}, 403)
             return self._json(load_db())
+        if path == "/api/admin/templates":
+            ok, _ = self._is_admin()
+            admin_ok = ok or self.headers.get("X-Admin-Key", "") == ADMIN_KEY
+            if not admin_ok:
+                return self._json({"error": "forbidden"}, 403)
+            return self._json({"templates": list_templates()})
+
         if path == "/api/admin/link":
             ok, _ = self._is_admin()
             admin_ok = ok or self.headers.get("X-Admin-Key", "") == ADMIN_KEY
@@ -430,6 +479,20 @@ class Handler(BaseHTTPRequestHandler):
                     d.write(s.read())
             return self._json({"ok": True, "n": len(load_db())})
 
+        if path == "/api/admin/load-template":
+            if not admin_ok:
+                return self._json({"error": "forbidden"}, 403)
+            qs = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            name = qs.get("name", [""])[0]
+            with_data = qs.get("data", ["0"])[0] in ("1", "true", "yes")
+            try:
+                info = load_template(name, with_data)
+            except FileNotFoundError:
+                return self._json({"ok": False, "error": f"没有这个模板：{name}"}, 404)
+            info["ok"] = True
+            info["with_data"] = with_data
+            return self._json(info)
+
         return self._send("Not Found", "text/plain; charset=utf-8", 404)
 
 
@@ -457,13 +520,17 @@ def main():
 
     os.makedirs(DATA, exist_ok=True)
     if not os.path.exists(SURVEY):
-        save_survey({"title": "未命名问卷", "intro": "", "questions": []})
-    if not os.path.exists(DB):
-        if not args.empty and os.path.exists(SAMPLE):
-            with open(SAMPLE, encoding="utf-8") as s, open(DB, "w", encoding="utf-8") as d:
-                d.write(s.read())
+        # 首次运行：从模板装一份题库（默认用通用示例）
+        tpl = os.path.join(TEMPLATES, "generic.survey.json")
+        if os.path.exists(tpl):
+            with open(tpl, encoding="utf-8-sig") as f:
+                save_survey(json.load(f))
+            print("· 已从模板初始化题库：generic")
         else:
-            open(DB, "w", encoding="utf-8").close()
+            save_survey({"title": "未命名问卷", "intro": "", "questions": []})
+    if not os.path.exists(DB):
+        open(DB, "w", encoding="utf-8").close()
+        print("· 空数据库已创建（后台可载入模板与示例数据）")
 
     s = load_survey()
     print(f"· {VER}")
@@ -484,4 +551,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

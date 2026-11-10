@@ -1,0 +1,37 @@
+{
+  "title": "示例问卷",
+  "intro": "这是一个四题的小例子，分别演示单选、多选、量表、文本四种题型。改题库不用改代码，在后台直接编辑 JSON 保存即可。",
+  "questions": [
+    {
+      "id": "demo_single",
+      "type": "single",
+      "title": "你今天的心情如何",
+      "options": ["很好", "一般", "不太好"],
+      "required": true
+    },
+    {
+      "id": "demo_multi",
+      "type": "multi",
+      "title": "你通常从哪些渠道获取信息",
+      "hint": "最多选 2 项",
+      "options": ["手机 App", "新闻网站", "社交媒体", "身边人", "其他"],
+      "max": 2,
+      "required": true
+    },
+    {
+      "id": "demo_scale",
+      "type": "scale",
+      "title": "你对这个工具的满意程度",
+      "labels": ["很不满意", "不太满意", "一般", "比较满意", "非常满意"],
+      "scale_max": 5,
+      "required": true
+    },
+    {
+      "id": "demo_text",
+      "type": "text",
+      "title": "还有什么想说的",
+      "hint": "选填",
+      "required": false
+    }
+  ]
+}

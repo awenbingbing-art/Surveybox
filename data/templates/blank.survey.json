@@ -1,0 +1,19 @@
+{
+  "title": "未命名问卷",
+  "intro": "在后台把题目改成你要问的问题，保存后刷新本页即可。",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "title": "第一题：请在这里写题干",
+      "options": ["选项 A", "选项 B", "选项 C"],
+      "required": true
+    },
+    {
+      "id": "q2",
+      "type": "text",
+      "title": "第二题：还有什么想补充的",
+      "required": false
+    }
+  ]
+}

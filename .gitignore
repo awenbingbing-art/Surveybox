@@ -1,10 +1,11 @@
-﻿__pycache__/
+﻿# 运行时状态（不进版本库）
+data/survey.json
+data/responses.jsonl
+data/*.jsonl
+!data/templates/*.jsonl
+
+__pycache__/
 *.pyc
 *.pyo
-
-# 实际采集库（含个人作答，不进版本库）
-data/responses.jsonl
-
-# 工具产物
 .dsh-office-*/
 *.log

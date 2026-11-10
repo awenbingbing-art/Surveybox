@@ -126,6 +126,11 @@
       直接编辑 JSON 后保存，刷新问卷页即生效。题型：<code>single</code> 单选 ·
       <code>multi</code> 多选（可设 <code>max</code>）· <code>scale</code> 量表（1—5）· <code>text</code> 文本。
     </div>
+    <div class="row" id="tplbar"></div>
+    <div class="row">
+      <label class="tip" style="margin:0"><input type="checkbox" id="withdata"> 同时载入模板配套数据</label>
+      <span class="log" id="tlog"></span>
+    </div>
     <textarea id="json" spellcheck="false"></textarea>
     <div class="row" style="margin-top:12px">
       <button class="btn pri" onclick="saveSurvey()">保存题库</button>
@@ -264,7 +269,28 @@ function copy(t){
   });
 }
 
+async function loadTemplates(){
+  const r = await fetch("/api/admin/templates", {headers: H});
+  if(!r.ok) return;
+  const j = await r.json();
+  const bar = document.getElementById("tplbar");
+  bar.innerHTML = '<span class="tip" style="margin:0">载入模板：</span>' +
+    j.templates.map(t=>`<button class="btn" onclick="useTemplate('${t.name}')">
+      ${t.title}<span style="color:#6E6A61"> · ${t.questions} 题${t.has_data?" · "+t.responses+" 条数据":""}</span>
+    </button>`).join("");
+}
+
+async function useTemplate(name){
+  const withData = document.getElementById("withdata").checked ? 1 : 0;
+  if(!confirm(`载入模板「${name}」会覆盖当前题库${withData?"和数据":""}，确定？`)) return;
+  const {ok, data} = await post(`/api/admin/load-template?name=${encodeURIComponent(name)}&data=${withData}`);
+  log("tlog", ok ? `已载入「${data.title}」${data.questions} 题${data.with_data?"，数据 N="+data.n:""}` : "失败：" + (data.error||""));
+  await loadJson();
+  refresh();
+}
+
 refresh();
+loadTemplates();
 loadJson();
 </script>
 </body>
