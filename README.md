@@ -1,6 +1,8 @@
-﻿# 北京“蓝天”公众感知调查 · 本地统计工具
+﻿# Surveybox · 轻量本地问卷统计
 
 一个**零依赖**的问卷采集与统计工具：自带问卷页、本地数据存储、统计看板与 CSV 导出。
+
+> 示例：用它完成过一次北京大气治理的公众感知调查（N=86），问卷原文见 `questionnaire.md`，脱敏数据见 `data/sample_responses.jsonl`。
 单机运行，数据不出本机，适合课堂汇报现场演示，也适合小型调查的前期摸底。
 
 ![Python](https://img.shields.io/badge/python-3.9%2B-3776AB)
@@ -83,6 +85,10 @@ survey-tool/
 2. 改 `server.py` 顶部的 `LIKERT` / `DEMO` / `MULTI` 字段映射；
 3. `python server.py --empty` 从空库开始收集；
 4. 结束时 `/export.csv` 导出，或 `/export.md` 直接取表。
+
+## 示例数据
+
+`data/sample_responses.jsonl` 是一次调查的脱敏样本（N=86，北京“蓝天”感知），用于演示看板效果；`python server.py --empty` 可从零开始采集。
 
 ## 说明
 

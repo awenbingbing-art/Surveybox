@@ -187,7 +187,7 @@ def to_md(rows):
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "BJAirSurvey/1.0"
+    server_version = "Surveybox/1.0"
 
     def log_message(self, fmt, *args):
         pass
