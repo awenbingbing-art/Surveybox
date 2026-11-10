@@ -1,4 +1,4 @@
-# 北京“蓝天”公众感知调查 · 本地统计工具
+﻿# 北京“蓝天”公众感知调查 · 本地统计工具
 
 一个**零依赖**的问卷采集与统计工具：自带问卷页、本地数据存储、统计看板与 CSV 导出。
 单机运行，数据不出本机，适合课堂汇报现场演示，也适合小型调查的前期摸底。
@@ -38,10 +38,12 @@ Windows 可直接双击 `run.bat`。依赖只有 Python 标准库，无需 pip i
 ```
 survey-tool/
 ├── server.py                  # HTTP 服务 + 统计引擎（仅标准库）
+├── bulk_fill.py               # 批量灌数（走真实 HTTP 接口）
 ├── seed.py                    # 把外部 CSV 转成 JSONL（可选）
 ├── smoke_test.py              # 提交链路自测
 ├── run.bat                    # Windows 一键启动
 ├── questionnaire.md           # 18 题问卷原文
+├── docs/使用手册.md            # 从发问卷到导出的全流程
 ├── web/
 │   ├── index.html             # 问卷页
 │   └── dashboard.html         # 统计看板（内联 CSS/JS）
@@ -91,3 +93,4 @@ survey-tool/
 ## License
 
 MIT
+
