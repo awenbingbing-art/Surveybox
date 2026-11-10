@@ -248,7 +248,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8765)
     ap.add_argument("--empty", action="store_true", help="不载入示例数据")
+    ap.add_argument("--db", default=None,
+                    help="指定数据文件（默认 data/responses.jsonl）；换一批数据就换一个文件")
+    ap.add_argument("--host", default="127.0.0.1", help="绑定地址，手机访问改为 0.0.0.0")
     args = ap.parse_args()
+
+    global DB
+    if args.db:
+        DB = os.path.abspath(args.db)
+        parent = os.path.dirname(DB)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
 
     os.makedirs(DATA, exist_ok=True)
     if not os.path.exists(DB):
@@ -261,11 +271,12 @@ def main():
             print("· 空数据库已创建")
 
     n = len(load())
+    print(f"· 数据文件 {DB}")
     print(f"· 当前样本 N={n}")
-    print(f"· 问卷页   http://127.0.0.1:{args.port}/")
-    print(f"· 统计看板 http://127.0.0.1:{args.port}/dashboard")
+    print(f"· 问卷页   http://{args.host}:{args.port}/")
+    print(f"· 统计看板 http://{args.host}:{args.port}/dashboard")
     print("· Ctrl+C 停止")
-    ThreadingHTTPServer(("127.0.0.1", args.port), Handler).serve_forever()
+    ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
 
 
 if __name__ == "__main__":
