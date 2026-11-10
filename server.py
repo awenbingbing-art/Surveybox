@@ -14,11 +14,11 @@ import csv
 import datetime
 import io
 import json
-import math
 import os
 import random
 import socket
 import statistics
+import sys
 import urllib.parse
 from collections import Counter
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -29,10 +29,33 @@ DATA = os.path.join(HERE, "data")
 
 SURVEY = os.path.join(DATA, "survey.json")
 DB = os.path.join(DATA, "responses.jsonl")
+DB2 = None                      # 可选：对比用的第二份数据
 SAMPLE = os.path.join(DATA, "sample_responses.jsonl")
 ADMIN_KEY = "tally2026"
 
-VER = "Surveybox/2.0"
+VER = "Surveybox/2.1"
+
+# 二维码：内置 vendor/qrcode（纯 Python，无外部依赖）
+sys.path.insert(0, os.path.join(HERE, "vendor"))
+try:
+    import qrcode
+    from qrcode.image.svg import SvgPathImage
+    QR_OK = True
+except Exception:                                   # pragma: no cover
+    QR_OK = False
+
+
+def make_qr_svg(text):
+    if not QR_OK:
+        return None
+    q = qrcode.QRCode(box_size=10, border=2, image_factory=SvgPathImage,
+                      error_correction=qrcode.constants.ERROR_CORRECT_M)
+    q.add_data(text)
+    q.make(fit=True)
+    svg = q.make_image().to_string().decode()
+    # 换成站点配色：墨色方块 + 纸色底
+    svg = svg.replace('fill="black"', 'fill="#1A1916"').replace('fill="white"', 'fill="#FAF9F5"')
+    return svg
 
 
 # ---------------------------------------------------------------- 基础读写
@@ -48,11 +71,12 @@ def save_survey(obj):
         json.dump(obj, f, ensure_ascii=False, indent=2)
 
 
-def load_db():
-    if not os.path.exists(DB):
+def load_db(path=None):
+    path = path or DB
+    if not os.path.exists(path):
         return []
     out = []
-    with open(DB, encoding="utf-8-sig") as f:
+    with open(path, encoding="utf-8-sig") as f:
         for line in f:
             line = line.strip()
             if not line:
@@ -95,9 +119,9 @@ def freq(vals):
     return [{"k": k, "n": n, "p": pct(n, total)} for k, n in c.most_common()]
 
 
-def compute():
+def compute(path=None):
     survey = load_survey()
-    rows = load_db()
+    rows = load_db(path)
     n = len(rows)
     out = {"n": n, "updated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
            "title": survey.get("title", ""), "questions": []}
@@ -170,6 +194,28 @@ def to_md():
 
 
 # ---------------------------------------------------------------- 自动灌数
+def parse_import(text):
+    """把 JSON 数组 / JSONL / CSV 文本统一解析成记录列表。"""
+    text = (text or "").strip()
+    if not text:
+        return []
+    if text[0] == "[":
+        return json.loads(text)
+    lines = [l for l in text.splitlines() if l.strip()]
+    if lines and lines[0].lstrip().startswith("{"):
+        out = []
+        for l in lines:
+            try:
+                out.append(json.loads(l))
+            except json.JSONDecodeError:
+                continue
+        if out:
+            return out
+    reader = csv.DictReader(io.StringIO(text))
+    return [{(k or "").strip(): (v or "").strip() for k, v in row.items()}
+            for row in reader]
+
+
 def seed_one(survey, rng):
     rec = {}
     for q in survey.get("questions", []):
@@ -253,6 +299,21 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(load_survey())
         if path == "/api/stats":
             return self._json(compute())
+        if path == "/api/compare":
+            if not DB2:
+                return self._json({"enabled": False})
+            a, b = compute(DB), compute(DB2)
+            return self._json({"enabled": True, "a": a, "b": b,
+                               "label_a": os.path.basename(DB),
+                               "label_b": os.path.basename(DB2)})
+        if path == "/api/qr":
+            qs = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            host = self.headers.get("Host", "127.0.0.1")
+            text = qs.get("text", [f"http://{host}/"])[0]
+            svg = make_qr_svg(text)
+            if svg is None:
+                return self._send("qrcode 未安装", "text/plain; charset=utf-8", 501)
+            return self._send(svg, "image/svg+xml; charset=utf-8")
         if path == "/api/responses":
             ok, _ = self._is_admin()
             admin_ok = ok or self.headers.get("X-Admin-Key", "") == ADMIN_KEY
@@ -310,6 +371,41 @@ class Handler(BaseHTTPRequestHandler):
             save_survey(body)
             return self._json({"ok": True, "count": len(body["questions"])})
 
+        if path == "/api/admin/import":
+            if not admin_ok:
+                return self._json({"error": "forbidden"}, 403)
+            body = self._body()
+            text = body.get("text", "")
+            spread = int(body.get("spread_days", 0) or 0)
+            try:
+                rows = parse_import(text)
+            except Exception as e:
+                return self._json({"ok": False, "error": f"解析失败：{e}"}, 400)
+            if not rows:
+                return self._json({"ok": False, "error": "没有解析到任何记录"}, 400)
+            survey = load_survey()
+            ids = [q["id"] for q in survey.get("questions", [])]
+            titles = {q.get("title", ""): q["id"] for q in survey.get("questions", [])}
+            qtypes = {q["id"]: q.get("type", "single") for q in survey.get("questions", [])}
+            start = len(load_db())
+            for i, r in enumerate(rows):
+                rec = {}
+                for k, v in r.items():
+                    key = k if k in ids else titles.get(str(k).strip(), k)
+                    if key not in ids:
+                        continue
+                    if qtypes.get(key) == "multi" and isinstance(v, str) and v:
+                        v = [x.strip() for x in v.replace("、", ";").replace(",", ";").split(";") if x.strip()]
+                    rec[key] = v
+                if spread > 0:      # 把时间摊到过去 N 天里，看起来像历史数据
+                    days = spread * (i + 1) / (len(rows) + 1)
+                    ts = datetime.datetime.now() - datetime.timedelta(
+                        days=spread - days, hours=random.randint(0, 9))
+                    rec["ts"] = ts.strftime("%Y-%m-%d %H:%M:%S")
+                append_rec(rec)
+            return self._json({"ok": True, "imported": len(rows),
+                               "n": len(load_db()), "from": start + 1})
+
         if path == "/api/admin/seed":
             if not admin_ok:
                 return self._json({"error": "forbidden"}, 403)
@@ -342,15 +438,18 @@ def main():
     ap.add_argument("--port", type=int, default=8765)
     ap.add_argument("--host", default="127.0.0.1", help="手机访问改 0.0.0.0")
     ap.add_argument("--db", default=None)
+    ap.add_argument("--db2", default=None, help="第二份数据，用于对比")
     ap.add_argument("--survey", default=None)
     ap.add_argument("--admin-key", default=None)
     ap.add_argument("--empty", action="store_true")
     args = ap.parse_args()
 
-    global DB, SURVEY, ADMIN_KEY
+    global DB, DB2, SURVEY, ADMIN_KEY
     if args.db:
         DB = os.path.abspath(args.db)
         os.makedirs(os.path.dirname(DB) or ".", exist_ok=True)
+    if args.db2:
+        DB2 = os.path.abspath(args.db2)
     if args.survey:
         SURVEY = os.path.abspath(args.survey)
     if args.admin_key:
@@ -370,11 +469,16 @@ def main():
     print(f"· {VER}")
     print(f"· 问卷《{s.get('title')}》  {len(s.get('questions', []))} 题")
     print(f"· 数据 {DB}  N={len(load_db())}")
+    if DB2:
+        print(f"· 对比 {DB2}  N={len(load_db(DB2))}")
     print(f"· 问卷   http://{args.host}:{args.port}/")
     print(f"· 看板   http://{args.host}:{args.port}/dashboard")
     print(f"· 后台   http://{args.host}:{args.port}/admin?key={ADMIN_KEY}   （无 key 返回 404）")
+    print(f"· 二维码 http://{args.host}:{args.port}/api/qr")
     if args.host == "0.0.0.0":
         print(f"· 手机   http://{lan_ip()}:{args.port}/")
+    if not QR_OK:
+        print("· 提示：vendor/qrcode 缺失，二维码不可用（其余功能正常）")
     ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
 
 

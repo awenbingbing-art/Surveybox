@@ -25,21 +25,22 @@
   .acts a,.acts button{font-size:12px;letter-spacing:.08em;padding:9px 14px;border:1px solid var(--hair);
         background:#fff;color:var(--ink);text-decoration:none;cursor:pointer;font-family:inherit}
   .acts a:active,.acts button:active{border-color:var(--clay);color:var(--clay)}
-  section{border-top:1px solid var(--hair);padding-top:18px;margin-bottom:38px}
+  section{border-top:1px solid var(--hair);padding-top:18px;margin-bottom:36px}
   .sl{font-size:10.5px;letter-spacing:.18em;color:var(--clay);text-transform:uppercase;margin-bottom:6px}
   h2{font-family:Georgia,"Songti SC","宋体",serif;font-weight:400;font-size:21px;margin:0 0 14px}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
   input[type=number],input[type=text]{border:1px solid var(--hair);background:#fff;padding:9px 12px;
         font:inherit;color:inherit;width:110px}
-  input[type=text]{width:100%;max-width:420px}
   .btn{background:#fff;border:1px solid var(--hair);color:var(--ink);padding:9px 16px;
        font:inherit;font-size:13px;cursor:pointer}
   .btn:active{border-color:var(--clay);color:var(--clay)}
   .btn.pri{background:var(--clay);border-color:var(--clay);color:#fff}
   .btn.pri:active{background:#B55B3D}
   .btn.warn{border-color:#C9A096;color:#A34B2E}
-  textarea{width:100%;min-height:260px;border:1px solid var(--hair);background:#fff;padding:12px;
+  textarea{width:100%;border:1px solid var(--hair);background:#fff;padding:12px;
            font-family:Consolas,Menlo,monospace;font-size:12px;line-height:1.6;color:var(--ink);resize:vertical}
+  #json{min-height:240px}
+  #imp{min-height:150px}
   .tip{font-size:12px;color:var(--muted);margin:6px 0 12px}
   .kv{display:grid;grid-template-columns:120px 1fr;gap:8px 14px;font-size:13px;align-items:center}
   .kv .k{color:var(--muted)}
@@ -48,12 +49,14 @@
   .badge{display:inline-block;font-size:11px;letter-spacing:.14em;color:var(--clay);
          border:1px solid var(--clay);padding:3px 9px}
   .log{font-size:12px;color:var(--muted);margin-top:10px;min-height:18px}
+  .qr{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .qr img{width:168px;height:168px;background:#fff;border:1px solid var(--hair);padding:6px}
   @media (max-width:640px){
     .wrap{padding:30px 18px 60px}
     h1{font-size:27px}
     .kv{grid-template-columns:1fr}
     .kv .v{margin-bottom:8px}
-    input[type=number]{width:90px}
+    input[type=number]{width:88px}
   }
 </style>
 </head>
@@ -80,6 +83,7 @@
       <span class="badge" id="n">N = 0</span>
       <span class="tip" style="margin:0" id="dbfile"></span>
     </div>
+    <div class="tip" id="cmpstate"></div>
     <div class="row">
       <input type="number" id="seedn" value="20" min="1" max="500">
       <button class="btn pri" onclick="seed()">灌入随机答卷</button>
@@ -92,7 +96,31 @@
   </section>
 
   <section>
-    <div class="sl">02 · SURVEY</div>
+    <div class="sl">02 · IMPORT</div>
+    <h2>导入已有数据</h2>
+    <div class="tip">
+      粘贴 <b>JSON 数组</b>、<b>JSONL</b>（一行一条）或 <b>CSV</b>（首行表头）都行。
+      表头可以写题目 <code>id</code>，也可以直接写题干标题，会自动对上。
+      多选题用 <code>;</code> 分隔多个选项。
+    </div>
+    <div class="row">
+      <input type="file" id="file" accept=".csv,.json,.jsonl,.txt" style="font-size:12px">
+      <span class="tip" style="margin:0">选中文件会自动读进下面的框</span>
+    </div>
+    <textarea id="imp" spellcheck="false" placeholder='[{&quot;gender&quot;:&quot;女&quot;,&quot;grade&quot;:&quot;大二&quot;,&quot;q6&quot;:4,...}]'></textarea>
+    <div class="row" style="margin-top:12px">
+      <label class="tip" style="margin:0">时间摊到过去</label>
+      <input type="number" id="days" value="0" min="0" max="3650">
+      <span class="tip" style="margin:0">天（0 = 用当前时间；填 30 则看起来像一个月里陆续收的）</span>
+    </div>
+    <div class="row">
+      <button class="btn pri" onclick="doImport()">导入</button>
+      <span class="log" id="ilog"></span>
+    </div>
+  </section>
+
+  <section>
+    <div class="sl">03 · SURVEY</div>
     <h2>题库</h2>
     <div class="tip">
       直接编辑 JSON 后保存，刷新问卷页即生效。题型：<code>single</code> 单选 ·
@@ -107,19 +135,24 @@
   </section>
 
   <section>
-    <div class="sl">03 · SHARE</div>
-    <h2>分享与后门</h2>
-    <div class="kv">
-      <div class="k">手机访问</div><div class="v" id="lan">—</div>
-      <div class="k">后台地址</div><div class="v" id="adminurl">—</div>
-      <div class="k">后台密钥</div><div class="v" id="keyv">—</div>
-      <div class="k">数据文件</div><div class="v" id="dbfile2">—</div>
+    <div class="sl">04 · SHARE</div>
+    <h2>分享、二维码与后门</h2>
+    <div class="qr">
+      <img id="qrimg" alt="问卷二维码" src="/api/qr">
+      <div style="flex:1;min-width:220px">
+        <div class="kv">
+          <div class="k">手机访问</div><div class="v" id="lan">—</div>
+          <div class="k">后台地址</div><div class="v" id="adminurl">—</div>
+          <div class="k">后台密钥</div><div class="v" id="keyv">—</div>
+          <div class="k">数据文件</div><div class="v" id="dbfile2">—</div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" onclick="copy(document.getElementById('lan').textContent)">复制手机地址</button>
+          <a class="btn" href="/api/qr" target="_blank">下载二维码 SVG</a>
+        </div>
+      </div>
     </div>
-    <div class="row" style="margin-top:14px">
-      <button class="btn" onclick="copy(document.getElementById('lan').textContent)">复制手机地址</button>
-      <button class="btn" onclick="copy(document.getElementById('adminurl').textContent.startsWith('http')?document.getElementById('adminurl').textContent:location.origin+document.getElementById('adminurl').textContent)">复制后台地址</button>
-    </div>
-    <div class="tip" style="margin-top:10px">
+    <div class="tip" style="margin-top:14px">
       后门：<code>/admin</code> 不带 key 直接返回 404，看起来这个站没有后台；
       带 <code>?key=</code> 进来后 24 小时内免密。
       提交接口带 <code>X-Admin-Key</code> 头时会跳过必答校验，方便现场快速造样本。
@@ -148,6 +181,11 @@ async function refresh(){
   document.getElementById("lan").textContent = j.lan;
   document.getElementById("adminurl").textContent = j.admin;
   document.getElementById("keyv").textContent = j.key;
+
+  const c = await fetch("/api/compare").then(x=>x.json()).catch(()=>({enabled:false}));
+  document.getElementById("cmpstate").innerHTML = c.enabled
+    ? `对比已开启：<b>${c.label_a}</b>（N=${c.a.n}） vs <b>${c.label_b}</b>（N=${c.b.n}）`
+    : `未开启对比（启动时加 <code>--db2 另一份数据.jsonl</code> 即可在看板并排比较）`;
 }
 
 async function post(url, body){
@@ -165,7 +203,7 @@ async function seed(){
 
 async function reset(){
   if(!confirm("清空全部答卷？此操作不可撤销。")) return;
-  const {ok, data} = await post("/api/admin/reset");
+  const {ok} = await post("/api/admin/reset");
   log("slog", ok ? "已清空，N=0" : "失败");
   refresh();
 }
@@ -176,6 +214,23 @@ async function loadSample(){
   log("slog", ok ? `已载入示例，N=${data.n}` : "失败");
   refresh();
 }
+
+async function doImport(){
+  const text = document.getElementById("imp").value.trim();
+  if(!text) return log("ilog", "先把数据粘进来");
+  const days = parseInt(document.getElementById("days").value || "0", 10);
+  const {ok, data} = await post("/api/admin/import", {text, spread_days: days});
+  log("ilog", ok ? `已导入 ${data.imported} 条，当前 N=${data.n}` : "失败：" + (data.error||""));
+  refresh();
+}
+
+document.getElementById("file").onchange = async (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const t = await f.text();
+  document.getElementById("imp").value = t;
+  log("ilog", `已读取 ${f.name}（${(f.size/1024).toFixed(1)} KB），点“导入”写库`);
+};
 
 async function loadJson(){
   const r = await fetch("/api/survey");

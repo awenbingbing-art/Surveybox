@@ -27,6 +27,7 @@ python server.py --host 0.0.0.0           # 手机同局域网可访问
 python server.py --empty                  # 空库开始
 python server.py --db data/batch2.jsonl   # 换一批数据
 python server.py --admin-key mysecret     # 换后台钥匙
+python server.py --db2 data/demo_b.jsonl # 开启对比（看板出现“对比”开关）
 ```
 
 启动后终端会打印四个地址，其中包括带 key 的后台链接。
@@ -38,6 +39,10 @@ Windows 可直接双击 `run.bat`。
 - **看板**：频数分布、均值±标准差、文本摘录，手机端自动单列
 - **后台**：一键灌 N 份随机答卷、载入示例、清空、直接编辑题库 JSON、导出 CSV / Markdown
 - **后门**：`/admin` 不带 key 就是 404；提交接口带 `X-Admin-Key` 头时跳过必答校验
+- **二维码**：`/api/qr` 输出问卷页二维码 SVG，后台里直接看、直接下
+- **图表**：看板支持条形 / 饼图切换，量表题带均值和分布
+- **对比**：`--db2 另一份数据.jsonl` 后，看板可并排比较两批样本
+- **导入**：后台粘贴 JSON / JSONL / CSV 即可入库，可把时间摊到过去 N 天
 
 ## 目录结构
 
@@ -57,6 +62,7 @@ Surveybox/
 └── data/
     ├── survey.json            # 题库定义
     ├── sample_responses.jsonl # 示例样本 N=86
+    ├── demo_b.jsonl          # 对比用的第二份样本 N=120
     └── responses.jsonl        # 实际采集库（已 gitignore）
 ```
 
@@ -87,6 +93,9 @@ Surveybox/
 | `/api/responses` | GET | 原始数据（需钥匙） |
 | `/api/admin/seed?n=` | POST | 灌 n 份随机答卷 |
 | `/api/admin/reset` | POST | 清空 |
+| `/api/admin/import` | POST | 导入 JSON / JSONL / CSV |
+| `/api/compare` | GET | 两个数据集的统计结果 |
+| `/api/qr?text=` | GET | 二维码 SVG |
 | `/export.csv` · `/export.md` | GET | 导出 |
 
 ## 示例数据

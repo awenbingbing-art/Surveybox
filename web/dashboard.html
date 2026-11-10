@@ -7,7 +7,7 @@
 <style>
   :root{
     --cream:#FAF9F5; --ink:#1A1916; --muted:#6E6A61; --clay:#C96A42;
-    --hair:#D9D5C9; --ivory:#F1EFE7; --green:#5B7A5A;
+    --hair:#D9D5C9; --ivory:#F1EFE7; --green:#5B7A5A; --kraft:#D4A27F;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;background:var(--cream);color:var(--ink)}
@@ -21,32 +21,46 @@
   .meta{color:var(--muted);font-size:12.5px}
   .meta b{color:var(--ink);font-weight:600}
   .bar-top{display:flex;justify-content:space-between;align-items:flex-end;
-           border-bottom:1px solid var(--hair);padding-bottom:16px;margin-bottom:30px;gap:16px;flex-wrap:wrap}
+           border-bottom:1px solid var(--hair);padding-bottom:16px;margin-bottom:28px;gap:16px;flex-wrap:wrap}
   .acts{display:flex;gap:8px;flex-wrap:wrap}
   .acts a,.acts button{font-size:12px;letter-spacing:.08em;padding:9px 15px;border:1px solid var(--hair);
         background:#fff;color:var(--ink);text-decoration:none;cursor:pointer;font-family:inherit}
   .acts a:active,.acts button:active{border-color:var(--clay);color:var(--clay)}
-  .hero{display:flex;gap:44px;flex-wrap:wrap;margin-bottom:38px;align-items:flex-end}
-  .bignum{font-family:Georgia,serif;font-size:66px;color:var(--clay);line-height:1;letter-spacing:-.01em}
+  .acts button.on{background:var(--clay);border-color:var(--clay);color:#fff}
+  .hero{display:flex;gap:44px;flex-wrap:wrap;margin-bottom:32px;align-items:flex-end}
+  .bignum{font-family:Georgia,serif;font-size:64px;color:var(--clay);line-height:1;letter-spacing:-.01em}
   .bignum small{font-size:15px;color:var(--muted);letter-spacing:.04em;margin-left:8px}
   .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 48px}
   .blk{border-top:1px solid var(--hair);padding-top:14px;min-width:0}
   .blk .lb{font-size:10.5px;letter-spacing:.16em;color:var(--clay);text-transform:uppercase;margin-bottom:8px}
   .blk h3{font-family:Georgia,"Songti SC","宋体",serif;font-weight:400;font-size:17px;
           margin:0 0 12px;line-height:1.45}
-  .row{display:grid;grid-template-columns:minmax(64px,120px) 1fr 74px;gap:10px;align-items:center;
+  .row{display:grid;grid-template-columns:minmax(64px,118px) 1fr 74px;gap:10px;align-items:center;
        padding:4px 0;font-size:12.5px}
   .row .k{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .row .track{height:6px;background:var(--ivory);position:relative;min-width:30px}
   .row .fill{position:absolute;left:0;top:0;bottom:0;background:var(--clay)}
   .row .v{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
   .row .v b{color:var(--ink);font-weight:600}
+  .cmprow{padding:5px 0;font-size:12.5px}
+  .cmprow .k{display:flex;justify-content:space-between;color:var(--ink);margin-bottom:3px}
+  .cmprow .k .d{color:var(--muted);font-variant-numeric:tabular-nums}
+  .cmprow .t2{height:5px;background:var(--ivory);position:relative;margin-bottom:2px}
+  .cmprow .t2 i{position:absolute;left:0;top:0;bottom:0;display:block}
+  .cmprow .t2.a i{background:var(--clay)}
+  .cmprow .t2.b i{background:var(--kraft)}
   .mean{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
   .mean b{font-family:Georgia,serif;font-size:32px;font-weight:400;color:var(--clay);line-height:1}
   .mean span{color:var(--muted);font-size:12px}
+  .donut{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  .donut svg{flex:0 0 auto}
+  .legend{font-size:11.5px;color:var(--muted);flex:1;min-width:120px}
+  .legend div{display:flex;align-items:center;gap:7px;padding:2px 0}
+  .legend i{width:9px;height:9px;display:block;flex:0 0 auto}
   .quote{border-left:2px solid var(--hair);padding:2px 0 2px 12px;color:var(--muted);
          font-size:12.5px;margin:6px 0}
   .empty{padding:70px 0;color:var(--muted);font-size:14px}
+  .tip{font-size:11.5px;color:var(--muted);margin-top:8px}
   footer{margin-top:56px;border-top:1px solid var(--hair);padding-top:14px;
          font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;
          gap:14px;flex-wrap:wrap}
@@ -54,8 +68,9 @@
     .wrap{padding:30px 18px 56px}
     h1{font-size:27px}
     .grid{grid-template-columns:1fr;gap:26px}
-    .bignum{font-size:52px}
-    .hero{gap:28px}
+    .bignum{font-size:50px}
+    .hero{gap:26px}
+    .row{grid-template-columns:minmax(56px,96px) 1fr 66px}
   }
 </style>
 </head>
@@ -69,14 +84,17 @@
       <div class="meta" id="meta">读取中…</div>
     </div>
     <div class="acts">
+      <button id="btnBar" class="on" onclick="setChart('bar')">条形</button>
+      <button id="btnPie" onclick="setChart('pie')">饼图</button>
+      <button id="btnCmp" style="display:none" onclick="setMode('compare')">对比</button>
+      <button id="btnOne" style="display:none" class="on" onclick="setMode('single')">单库</button>
       <a href="/export.csv">导出 CSV</a>
-      <a href="/export.md">导出表</a>
       <a href="/">去填问卷</a>
-      <button onclick="load()">刷新</button>
     </div>
   </div>
 
   <div class="hero" id="hero"></div>
+  <div class="tip" id="cmptip" style="display:none"></div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" style="display:none">还没有数据。打开 <b>/</b> 填第一份，或在后台灌数。</div>
 
@@ -87,74 +105,147 @@
 </div>
 
 <script>
-const fmtP = v => (Math.round(v*10)/10).toFixed(1);
+const PAL = ["#C96A42","#8A6A4F","#8E9680","#7C93A8","#CBC8BD","#B9A88F","#9C9187"];
+let ST = null, CMP = null, CHART = "bar", MODE = "single";
 
-function barRows(rows, maxP){
-  const top = maxP || Math.max(...rows.map(r=>r.p), 1);
+const p1 = v => (Math.round(v*10)/10).toFixed(1);
+
+function barRows(rows){
+  const top = Math.max(...rows.map(r=>r.p), 1);
   return rows.map(r=>`
     <div class="row">
       <div class="k" title="${r.k}">${r.k}</div>
       <div class="track"><div class="fill" style="width:${(r.p/top*100).toFixed(1)}%"></div></div>
-      <div class="v"><b>${fmtP(r.p)}</b>%<span style="opacity:.55"> ${r.n}</span></div>
+      <div class="v"><b>${p1(r.p)}</b>%<span style="opacity:.55"> ${r.n}</span></div>
     </div>`).join("");
+}
+
+function donut(rows){
+  const total = rows.reduce((s,r)=>s+r.p,0) || 1;
+  const R = 52, C = 2*Math.PI*R;
+  let acc = 0;
+  const segs = rows.map((r,i)=>{
+    const len = r.p/total*C;
+    const s = `<circle cx="64" cy="64" r="${R}" fill="none" stroke="${PAL[i%PAL.length]}"
+      stroke-width="24" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}"
+      stroke-dashoffset="${(-acc).toFixed(2)}" transform="rotate(-90 64 64)"/>`;
+    acc += len;
+    return s;
+  }).join("");
+  const legend = rows.map((r,i)=>`<div><i style="background:${PAL[i%PAL.length]}"></i>
+      <span style="flex:1">${r.k}</span><b style="color:#1A1916">${p1(r.p)}%</b></div>`).join("");
+  return `<div class="donut"><svg viewBox="0 0 128 128" width="128" height="128">${segs}</svg>
+          <div class="legend">${legend}</div></div>`;
+}
+
+function cmpRows(rowsA, rowsB){
+  const keys = [...new Set([...rowsA.map(r=>r.k), ...rowsB.map(r=>r.k)])];
+  const max = Math.max(...rowsA.map(r=>r.p), ...rowsB.map(r=>r.p), 1);
+  const mapB = Object.fromEntries(rowsB.map(r=>[r.k, r.p]));
+  const mapA = Object.fromEntries(rowsA.map(r=>[r.k, r.p]));
+  return keys.map(k=>{
+    const a = mapA[k] ?? 0, b = mapB[k] ?? 0;
+    const d = a - b;
+    const dtxt = (d>=0?"+":"") + p1(d);
+    return `<div class="cmprow">
+      <div class="k"><span>${k}</span><span class="d">${p1(a)}% / ${p1(b)}%　${dtxt}</span></div>
+      <div class="t2 a"><i style="width:${(a/max*100).toFixed(1)}%"></i></div>
+      <div class="t2 b"><i style="width:${(b/max*100).toFixed(1)}%"></i></div>
+    </div>`;
+  }).join("");
+}
+
+function findQ(list, id){ return (list||[]).find(q=>q.id===id); }
+
+function block(q, i){
+  const kind = q.type==="scale"?"量表":q.type==="multi"?"多选":q.type==="text"?"文本":"单选";
+  let head = `<div class="lb">${String(i+1).padStart(2,"0")} · ${kind}</div><h3>${q.title}</h3>`;
+  const other = MODE==="compare" && CMP?.enabled ? findQ(CMP.b.questions, q.id) : null;
+
+  if(q.type === "scale" && q.mean !== undefined){
+    const m2 = other && other.mean !== undefined ? other.mean : null;
+    const line2 = m2!==null
+      ? `<span style="color:var(--muted);font-size:12px">　对比 ${m2.toFixed(2)}（Δ ${(q.mean-m2>=0?"+":"")+(q.mean-m2).toFixed(2)}）</span>` : "";
+    return head + `<div class="mean"><b>${q.mean.toFixed(2)}</b>
+      <span>± ${q.sd.toFixed(2)}　有效 ${q.answered}${line2}</span></div>
+      <div class="row" style="grid-template-columns:1fr 74px">
+        <div class="track"><div class="fill" style="width:${(q.mean/5*100).toFixed(1)}%"></div></div>
+        <div class="v"><b>${(q.mean/5*100).toFixed(0)}</b>%</div>
+      </div>`;
+  }
+
+  if(q.type === "text"){
+    const s = (q.samples||[]).map(t=>`<div class="quote">${t}</div>`).join("");
+    return head + (s || `<div class="v" style="text-align:left">（暂无文本作答）</div>`);
+  }
+
+  if(MODE === "compare" && other){
+    return head + cmpRows(q.rows||[], other.rows||[]);
+  }
+
+  if(!(q.rows||[]).length) return head + `<div class="v" style="text-align:left">—</div>`;
+  return head + (CHART==="pie" && q.type==="single" ? donut(q.rows) : barRows(q.rows));
+}
+
+function setChart(v){
+  CHART = v;
+  document.getElementById("btnBar").classList.toggle("on", v==="bar");
+  document.getElementById("btnPie").classList.toggle("on", v==="pie");
+  render();
+}
+function setMode(v){
+  MODE = v;
+  document.getElementById("btnCmp").classList.toggle("on", v==="compare");
+  document.getElementById("btnOne").classList.toggle("on", v==="single");
+  render();
+}
+
+function render(){
+  if(!ST || !ST.n){ return; }
+  document.getElementById("grid").innerHTML = ST.questions.map(block).join("");
 }
 
 async function load(){
   const r = await fetch("/api/stats");
-  const s = await r.json();
-  document.getElementById("title").textContent = (s.title || "统计看板");
-  document.getElementById("meta").innerHTML =
-    `样本量 <b>N = ${s.n}</b> ｜ 更新 <b>${s.updated || "—"}</b> ｜ 匿名自填`;
-  document.getElementById("foot").textContent = "N = " + s.n;
+  ST = await r.json();
+  document.getElementById("title").textContent = ST.title || "统计看板";
+  const cmpR = await fetch("/api/compare").catch(()=>null);
+  CMP = cmpR && cmpR.ok ? await cmpR.json() : {enabled:false};
 
-  if(!s.n){
+  document.getElementById("meta").innerHTML =
+    `样本量 <b>N = ${ST.n}</b> ｜ 更新 <b>${ST.updated || "—"}</b> ｜ 匿名自填`;
+
+  if(CMP?.enabled){
+    document.getElementById("btnCmp").style.display = "";
+    document.getElementById("btnOne").style.display = "";
+    document.getElementById("cmptip").style.display = "";
+    document.getElementById("cmptip").innerHTML =
+      `对比中：<b>${CMP.label_a}</b>（N=${CMP.a.n}） vs <b>${CMP.label_b}</b>（N=${CMP.b.n}）。
+       条形对：■ 主库 ■ 对比库`;
+  }
+
+  if(!ST.n){
     document.getElementById("hero").innerHTML = "";
     document.getElementById("grid").innerHTML = "";
     document.getElementById("empty").style.display = "block";
+    document.getElementById("foot").textContent = "N = 0";
     return;
   }
   document.getElementById("empty").style.display = "none";
+  document.getElementById("foot").textContent = "N = " + ST.n;
 
-  const scales = s.questions.filter(q=>q.type==="scale" && q.mean !== undefined);
+  const scales = ST.questions.filter(q=>q.type==="scale" && q.mean !== undefined);
   const overall = scales.length ? (scales.reduce((a,q)=>a+q.mean,0)/scales.length) : null;
 
   document.getElementById("hero").innerHTML = `
-    <div>
-      <div class="kicker" style="margin-bottom:8px">样本量</div>
-      <div class="bignum">${s.n}<small>份</small></div>
-    </div>
-    ${overall!==null?`<div>
-      <div class="kicker" style="margin-bottom:8px">量表题均值</div>
-      <div class="bignum">${overall.toFixed(2)}<small>/ 5</small></div>
-    </div>`:""}
-    <div>
-      <div class="kicker" style="margin-bottom:8px">题目数</div>
-      <div class="bignum">${s.questions.length}<small>题</small></div>
-    </div>`;
+    <div><div class="kicker" style="margin-bottom:8px">样本量</div>
+      <div class="bignum">${ST.n}<small>份</small></div></div>
+    ${overall!==null?`<div><div class="kicker" style="margin-bottom:8px">量表题均值</div>
+      <div class="bignum">${overall.toFixed(2)}<small>/ 5</small></div></div>`:""}
+    <div><div class="kicker" style="margin-bottom:8px">题目数</div>
+      <div class="bignum">${ST.questions.length}<small>题</small></div></div>`;
 
-  document.getElementById("grid").innerHTML = s.questions.map((q, i)=>{
-    const kind = q.type==="scale" ? "量表" : q.type==="multi" ? "多选" : q.type==="text" ? "文本" : "单选";
-    const lb = `<div class="lb">${String(i+1).padStart(2,"0")} · ${kind}</div>`;
-    let bodyHtml;
-
-    if(q.type === "scale" && q.mean !== undefined){
-      bodyHtml = `
-        <div class="mean"><b>${q.mean.toFixed(2)}</b><span>± ${q.sd.toFixed(2)}　有效 ${q.answered}</span></div>
-        <div class="row" style="grid-template-columns:1fr 74px">
-          <div class="track"><div class="fill" style="width:${(q.mean/5*100).toFixed(1)}%"></div></div>
-          <div class="v"><b>${(q.mean/5*100).toFixed(0)}</b>%</div>
-        </div>`;
-    } else if(q.type === "text"){
-      bodyHtml = (q.samples && q.samples.length)
-        ? q.samples.map(t=>`<div class="quote">${t}</div>`).join("")
-        : `<div class="v" style="text-align:left">（暂无文本作答）</div>`;
-    } else {
-      bodyHtml = (q.rows && q.rows.length) ? barRows(q.rows)
-        : `<div class="v" style="text-align:left">—</div>`;
-    }
-
-    return `<div class="blk">${lb}<h3>${q.title}</h3>${bodyHtml}</div>`;
-  }).join("");
+  render();
 }
 
 load();
